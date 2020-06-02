@@ -28,35 +28,35 @@
     return self;
 }
 
-//id dynamicMethodIMP(id self, SEL _cmd) {
-//    NSLog(@"🔴类名与方法名：%@（在第%@行），描述：%@", @(__PRETTY_FUNCTION__), @(__LINE__), @"动态添加的方法");
-//    return @0;
-//}
-//
-//+ (BOOL)resolveInstanceMethod:(SEL)sel {
-//    class_addMethod(self.class, sel, (IMP)dynamicMethodIMP, "@@:");
-//    BOOL result = [super resolveInstanceMethod:sel];
-//    result = YES;
-//    return result; // 1
-//}
-//
+id dynamicMethodIMP(id self, SEL _cmd) {
+    NSLog(@"%s:动态添加的方法",__FUNCTION__);
+    return @0;
+}
+
++ (BOOL)resolveInstanceMethod:(SEL)sel {
+    class_addMethod(self.class, sel, (IMP)dynamicMethodIMP, "@@:");
+    BOOL result = [super resolveInstanceMethod:sel];
+    result = YES;
+    return result; // 1
+}
+
 - (id)forwardingTargetForSelector:(SEL)aSelector {
     id result = [super forwardingTargetForSelector:aSelector];
     result = self.target;
     return result; // 2
 }
 
-//- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector {
-//    id result = [super methodSignatureForSelector:aSelector];
-//    NSMethodSignature *signature = [NSMethodSignature signatureWithObjCTypes:"v@:"];
-//    result = signature;
-//    return result; // 3
-//}
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector {
+    id result = [super methodSignatureForSelector:aSelector];
+    NSMethodSignature *signature = [NSMethodSignature signatureWithObjCTypes:"v@:"];
+    result = signature;
+    return result; // 3
+}
 
-//- (void)forwardInvocation:(NSInvocation *)anInvocation {
-////    [super forwardInvocation:anInvocation];
-//    [self.target forwardInvocation:anInvocation];
-//}
+- (void)forwardInvocation:(NSInvocation *)anInvocation {
+//    [super forwardInvocation:anInvocation];
+    [self.target forwardInvocation:anInvocation];
+}
 
 - (void)doesNotRecognizeSelector:(SEL)aSelector {
     // 在crash前 保存crash数据，供分析
